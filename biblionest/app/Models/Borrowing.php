@@ -22,5 +22,11 @@ class Borrowing extends Model
     {
         return $this->belongsTo(Book::class);
     }
+
+    public function penalty()
+    {
+        return $this->hasOne(Penalty::class);
+    }
+
 }
 

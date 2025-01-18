@@ -1,7 +1,30 @@
 <x-app-layout>
+    
     <div class="container mx-auto">
         <h1 class="text-xl font-bold">📖 Liste des Emprunts</h1>
-        <a href="{{ route('borrowings.create') }}" class="text-blue-500">Emprunter un livre</a>
+        <a href="{{ route('borrowings.create') }}" 
+        class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-2 py-2 rounded-lg shadow-md transition transform hover:scale-200 flex items-center gap-2">
+            ➕ Ajouter un Emprunt
+        </a>
+        <form method="GET" action="{{ route('borrowings.index') }}" class="mb-4 mt-4 flex gap-4">
+            <select name="user_id" class="border px-4 py-2 rounded">
+                <option value="">Tous les emprunteurs</option>
+                @foreach($users as $user)
+                    <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                        {{ $user->name }}
+                    </option>
+                @endforeach
+            </select>
+
+            <select name="status" class="border px-4 py-2 rounded">
+                <option value="">Tous les statuts</option>
+                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>📖 En cours</option>
+                <option value="late" {{ request('status') == 'late' ? 'selected' : '' }}>❌ En retard</option>
+                <option value="returned" {{ request('status') == 'returned' ? 'selected' : '' }}>✅ Rendu</option>
+            </select>
+
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Filtrer</button>
+        </form>
 
         <table class="min-w-full bg-white border border-gray-200 mt-4">
             <thead>
@@ -17,7 +40,9 @@
             <tbody>
                 @foreach($borrowings as $borrowing)
                     <tr>
-                        <td class="py-2 px-4 border">{{ $borrowing->book->title }}</td>
+                    <td class="py-2 px-4 border">
+                        {{ $borrowing->book ? $borrowing->book->title : '📌 Livre supprimé' }}
+                    </td>
                         <td class="py-2 px-4 border">{{ $borrowing->user->name }}</td>
                         <td class="py-2 px-4 border">
                             {{ \Carbon\Carbon::parse($borrowing->borrowed_at)->format('d/m/Y') }}

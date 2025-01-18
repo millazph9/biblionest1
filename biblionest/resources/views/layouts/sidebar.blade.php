@@ -1,0 +1,43 @@
+<nav class="w-64 min-h-screen bg-white shadow-lg px-6 py-6 fixed">
+    <div class="mb-6 text-center">
+        <a href="{{ route('dashboard') }}" class="text-2xl font-bold text-gray-700 flex items-center justify-center gap-2">
+            📚 <span>{{ config('app.name', 'Laravel') }}</span>
+        </a>
+    </div>
+
+    <ul class="space-y-4">
+        <li>
+            <a href="{{ route('dashboard') }}" class="block text-gray-600 hover:text-blue-500 flex items-center gap-2">
+                📊 Tableau de Bord
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('books.index') }}" class="block text-gray-600 hover:text-blue-500 flex items-center gap-2">
+                📚 Livres
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('categories.index') }}" class="block text-gray-600 hover:text-blue-500 flex items-center gap-2">
+                🏷️ Catégories
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('borrowings.index') }}" class="block text-gray-600 hover:text-blue-500 flex items-center gap-2">
+                📖 Emprunts
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('penalties.index') }}" class="block text-gray-600 hover:text-blue-500 flex items-center gap-2">
+                💰 Pénalités
+            </a>
+        </li>
+        <li>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="block text-red-600 hover:text-red-800 flex items-center gap-2">
+                    🚪 Déconnexion
+                </button>
+            </form>
+        </li>
+    </ul>
+</nav>

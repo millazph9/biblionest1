@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('penalties_', function (Blueprint $table) {
+        Schema::create('penalties', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('borrowing_id')->constraigned('borrowings')->onDelete('cascade');
+            $table->foreignId('borrowing_id')->constrained('borrowings')->onDelete('cascade');
+            $table->decimal('amount', 8, 2); // Montant de la pénalité
+            $table->boolean('paid')->default(false); // Statut du paiement
+            $table->dateTime('paid_at')->nullable(); // Date du paiement
             $table->timestamps();
         });
     }

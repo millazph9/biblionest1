@@ -10,18 +10,30 @@ use Illuminate\Support\Carbon;
 
 class BorrowingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $borrowings = Borrowing::with(['user', 'book'])->get();
-        return view('borrowings.index', compact('borrowings'));
-    }
-
-    public function create()
-    {
+        $query = Borrowing::with(['user', 'book']);
+    
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+    
+        if ($request->filled('status')) {
+            if ($request->status == 'active') {
+                $query->whereNull('returned_at');
+            } elseif ($request->status == 'late') {
+                $query->whereNull('returned_at')->where('due_date', '<', now());
+            } elseif ($request->status == 'returned') {
+                $query->whereNotNull('returned_at');
+            }
+        }
+    
+        $borrowings = $query->paginate(10);
         $users = User::all();
-        $books = Book::where('copies_available', '>', 0)->get();
-        return view('borrowings.create', compact('users', 'books'));
+    
+        return view('borrowings.index', compact('borrowings', 'users'));
     }
+    
 
     public function store(Request $request)
     {
@@ -70,16 +82,27 @@ class BorrowingController extends Controller
         return redirect()->route('borrowings.index')->with('success', 'Emprunt mis à jour.');
     }
 
-    public function destroy(Borrowing $borrowing)
+    public function destroy($id)
     {
-        // Réajouter la copie si l'emprunt est supprimé avant retour
-        if (!$borrowing->returned_at) {
-            $borrowing->book->increment('copies_available');
+        $borrowing = Borrowing::find($id);
+    
+        if (!$borrowing) {
+            return redirect()->route('borrowings.index')->with('error', 'Emprunt introuvable.');
         }
-
+    
+        // Vérifier si le livre existe avant d'incrémenter les exemplaires disponibles
+        $book = Book::find($borrowing->book_id);
+    
+        if ($book) {
+            $book->increment('copies_available'); // Augmente les exemplaires disponibles si le livre existe
+        }
+    
+        // Supprimer l'emprunt
         $borrowing->delete();
-        return redirect()->route('borrowings.index')->with('success', 'Emprunt supprimé.');
+    
+        return redirect()->route('borrowings.index')->with('success', 'Emprunt supprimé avec succès.');
     }
+    
 
     public function returnBook(Borrowing $borrowing)
     {
@@ -92,4 +115,13 @@ class BorrowingController extends Controller
 
         return redirect()->route('borrowings.index')->with('success', 'Livre retourné avec succès.');
     }
+
+    public function create()
+{
+    $books = Book::where('copies_available', '>', 0)->get(); // Récupère les livres disponibles
+    $users = User::all(); // Récupère tous les utilisateurs
+
+    return view('borrowings.create', compact('books', 'users'));
+}
+
 }
