@@ -1,52 +1,71 @@
 <x-app-layout>
-    <div class="container mx-auto">
-        <h1 class="text-2xl font-bold mb-4">📚 Liste des Livres</h1>
+    <div class="container mx-auto px-4">
+        <h1 class="text-xl sm:text-2xl font-bold mb-4 text-center">📚 Liste des Livres</h1>
 
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+            <form method="GET" action="{{ route('books.index') }}" class="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                    <label for="category_id" class="text-sm sm:text-lg self-center">Filtrer :</label>
+                    <select name="category_id" id="category_id" class="border px-3 py-2 rounded-lg w-full sm:w-auto">
+                        <option value="">Toutes les catégories</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md transition w-full sm:w-auto">
+                🔎 Filtrer
+                </button>
+            </form>
 
-        <!-- Formulaire de filtre par catégorie -->
-        <form method="GET" action="{{ route('books.index') }}" class="mb-4 flex gap-4">
-            <label for="category_id" class="text-lg">Filtrer par catégorie :</label>
-            <select name="category_id" id="category_id" class="border px-4 py-2">
-                <option value="">Toutes les catégories</option>
-                @foreach ($categories as $category)
-                    <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                        {{ $category->name }}
-                    </option>
-                @endforeach
-            </select>
-            <button type="submit" class="bg-blue-500 text-black px-4 py-2">Filtrer</button>
-            <div class="flex justify-end mb-4">
-            <a href="{{ route('books.export.pdf') }}" 
-               class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md shadow-md transition transform hover:scale-105 flex items-center gap-2 text-sm w-fit">
-                📄 Exporter en PDF
-            </a>
+            <div class="w-full sm:w-auto flex justify-end">
+                <a href="{{ route('books.export.pdf') }}" 
+                   class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow-md transition text-sm flex items-center gap-2 justify-center w-full sm:w-auto">
+                    📄 Exporter en PDF
+                </a>
+            </div>
         </div>
-        </form>
 
-        <!-- Tableau des livres -->
-        <table class="min-w-full bg-white border border-gray-200 mt-4">
-            <thead>
-                <tr class="bg-gray-100">
-                    <th class="py-2 px-4 border">ISBN</th>
-                    <th class="py-2 px-4 border">Titre</th>
-                    <th class="py-2 px-4 border">Auteur</th>
-                    <th class="py-2 px-4 border">Année</th>
-                    <th class="py-2 px-4 border">Catégorie</th>
-                    <th class="py-2 px-4 border">Copies Dispo</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($books as $book)
-                    <tr>
-                        <td class="py-2 px-4 border">{{ $book->isbn }}</td>
-                        <td class="py-2 px-4 border">{{ $book->title }}</td>
-                        <td class="py-2 px-4 border">{{ $book->author }}</td>
-                        <td class="py-2 px-4 border">{{ $book->published_year }}</td>
-                        <td class="py-2 px-4 border">{{ $book->category->name ?? 'Non catégorisé' }}</td>
-                        <td class="py-2 px-4 border">{{ $book->copies_available }}</td>
+        <div class="hidden sm:block overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md mt-4">
+                <thead>
+                    <tr class="bg-gray-100 text-left text-sm sm:text-base">
+                        <th class="py-2 px-4 border">ISBN</th>
+                        <th class="py-2 px-4 border">Titre</th>
+                        <th class="py-2 px-4 border">Auteur</th>
+                        <th class="py-2 px-4 border">Année</th>
+                        <th class="py-2 px-4 border">Catégorie</th>
+                        <th class="py-2 px-4 border">Copies Dispo</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach ($books as $book)
+                        <tr class="hover:bg-gray-50 text-sm sm:text-base">
+                            <td class="py-2 px-4 border">{{ $book->isbn }}</td>
+                            <td class="py-2 px-4 border">{{ $book->title }}</td>
+                            <td class="py-2 px-4 border">{{ $book->author }}</td>
+                            <td class="py-2 px-4 border">{{ $book->published_year }}</td>
+                            <td class="py-2 px-4 border">{{ $book->category->name ?? 'Non catégorisé' }}</td>
+                            <td class="py-2 px-4 border text-center">{{ $book->copies_available }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <div class="sm:hidden flex flex-col gap-4">
+            @foreach ($books as $book)
+                <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                    <p class="font-bold text-lg">{{ $book->title }}</p>
+                    <p class="text-sm text-gray-600">Auteur : <span class="font-medium">{{ $book->author }}</span></p>
+                    <p class="text-sm text-gray-600">📅 Année : <span class="font-medium">{{ $book->published_year }}</span></p>
+                    <p class="text-sm text-gray-600">🏷️ Catégorie : <span class="font-medium">{{ $book->category->name ?? 'Non catégorisé' }}</span></p>
+                    <p class="text-sm text-gray-600">📖 Copies Dispo : <span class="font-medium">{{ $book->copies_available }}</span></p>
+                </div>
+            @endforeach
+        </div>
+
     </div>
 </x-app-layout>

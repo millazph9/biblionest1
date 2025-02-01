@@ -36,7 +36,7 @@ class PenaltyController extends Controller
     
     public function create()
     {
-        $borrowings = Borrowing::whereNotNull('returned_at')->where('due_date', '<', 'returned_at')->get();
+        $borrowings = Borrowing::whereNull('returned_at')->with('book', 'user')->get(); // Récupérer uniquement les emprunts non retournés
         return view('penalties.create', compact('borrowings'));
     }
 

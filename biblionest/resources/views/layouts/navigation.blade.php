@@ -5,11 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'Laravel') }}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script>
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("-translate-x-full");
+            document.getElementById("main-content").classList.toggle("ml-64");
+        }
+    </script>
 </head>
 <body class="bg-gray-100 flex">
 
+    <!-- Bouton "burger" pour mobile -->
+    <!-- <button class="sm:hidden p-4 focus:outline-none fixed top-2 left-2 z-50 bg-gray-700 text-black rounded-md" onclick="toggleSidebar()"> #}
+        ☰
+    </button> -->
+
     <!-- Sidebar (Navigation) -->
-    <nav class="w-64 min-h-screen bg-white shadow-md px-4 py-6 fixed">
+    <nav id="sidebar" class="w-64 min-h-screen bg-white shadow-md px-4 py-6 fixed transform -translate-x-full sm:translate-x-0 transition-transform duration-300">
         <div class="mb-6 text-center">
             <a href="{{ route('dashboard') }}" class="text-xl font-bold text-gray-700">
                 📚 {{ config('app.name', 'Laravel') }}
@@ -54,7 +65,7 @@
     </nav>
 
     <!-- Contenu Principal -->
-    <div class="ml-64 w-full p-6">
+    <div id="main-content" class="w-full p-6 transition-all duration-300 sm:ml-64">
         {{ $slot }}
     </div>
 

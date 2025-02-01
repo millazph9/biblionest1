@@ -1,4 +1,4 @@
-<nav class="w-64 min-h-screen bg-white shadow-lg px-6 py-6 fixed">
+<nav class="">
     <div class="mb-6 text-center">
         <a href="{{ route('dashboard') }}" class="text-2xl font-bold text-gray-700 flex items-center justify-center gap-2">
             📚 <span>{{ config('app.name', 'Laravel') }}</span>

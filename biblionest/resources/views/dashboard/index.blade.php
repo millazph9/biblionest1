@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="container mx-auto">
+    <div class="container mx-auto ml-5">
         <h1 class="text-2xl font-bold mb-6">📊 Tableau de Bord</h1>
 
         <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
