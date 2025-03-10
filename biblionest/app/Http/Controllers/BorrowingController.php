@@ -4,20 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Borrowing;
 use App\Models\Book;
-use App\Models\User;
+use App\Models\Adherent;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 
 class BorrowingController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Borrowing::with(['user', 'book']);
-    
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
+        $query = Borrowing::with(['book', 'adherent']); // Utilise adherent au lieu de user
+
+        if ($request->filled('adherent_id')) {
+            $query->where('adherent_id', $request->adherent_id);
         }
-    
+
         if ($request->filled('status')) {
             if ($request->status == 'active') {
                 $query->whereNull('returned_at');
@@ -27,18 +26,26 @@ class BorrowingController extends Controller
                 $query->whereNotNull('returned_at');
             }
         }
-    
+
         $borrowings = $query->paginate(10);
-        $users = User::all();
-    
-        return view('borrowings.index', compact('borrowings', 'users'));
+        $adherents = Adherent::all(); // Récupère tous les adhérents pour les filtres
+
+        return view('borrowings.index', compact('borrowings', 'adherents'));
     }
-    
+
+    public function create()
+    {
+        $books = Book::where('copies_available', '>', 0)->get();
+        $adherents = Adherent::all(); // ✅ On remplace 'users' par 'adherents'
+
+        return view('borrowings.create', compact('books', 'adherents')); // ✅ Passe 'adherents' à la vue
+    }
+
 
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'adherent_id' => 'required|exists:adherents,id',
             'book_id' => 'required|exists:books,id',
         ]);
 
@@ -49,7 +56,7 @@ class BorrowingController extends Controller
         }
 
         Borrowing::create([
-            'user_id' => $request->user_id,
+            'adherent_id' => $request->adherent_id, // Remplacement user_id → adherent_id
             'book_id' => $book->id,
             'borrowed_at' => now(),
             'due_date' => now()->addDays(14),
@@ -62,47 +69,26 @@ class BorrowingController extends Controller
 
     public function edit(Borrowing $borrowing)
     {
-        $users = User::all();
+        $adherents = Adherent::all(); // Correction ici
         $books = Book::where('copies_available', '>', 0)->get();
-        return view('borrowings.edit', compact('borrowing', 'users', 'books'));
+
+        return view('borrowings.edit', compact('borrowing', 'adherents', 'books'));
     }
 
     public function update(Request $request, Borrowing $borrowing)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'adherent_id' => 'required|exists:adherents,id',
             'book_id' => 'required|exists:books,id',
         ]);
 
         $borrowing->update([
-            'user_id' => $request->user_id,
+            'adherent_id' => $request->adherent_id,
             'book_id' => $request->book_id,
         ]);
 
         return redirect()->route('borrowings.index')->with('success', 'Emprunt mis à jour.');
     }
-
-    public function destroy($id)
-    {
-        $borrowing = Borrowing::find($id);
-    
-        if (!$borrowing) {
-            return redirect()->route('borrowings.index')->with('error', 'Emprunt introuvable.');
-        }
-    
-        // Vérifier si le livre existe avant d'incrémenter les exemplaires disponibles
-        $book = Book::find($borrowing->book_id);
-    
-        if ($book) {
-            $book->increment('copies_available'); // Augmente les exemplaires disponibles si le livre existe
-        }
-    
-        // Supprimer l'emprunt
-        $borrowing->delete();
-    
-        return redirect()->route('borrowings.index')->with('success', 'Emprunt supprimé avec succès.');
-    }
-    
 
     public function returnBook(Borrowing $borrowing)
     {
@@ -116,12 +102,22 @@ class BorrowingController extends Controller
         return redirect()->route('borrowings.index')->with('success', 'Livre retourné avec succès.');
     }
 
-    public function create()
-{
-    $books = Book::where('copies_available', '>', 0)->get(); // Récupère les livres disponibles
-    $users = User::all(); // Récupère tous les utilisateurs
+    public function destroy($id)
+    {
+        $borrowing = Borrowing::find($id);
 
-    return view('borrowings.create', compact('books', 'users'));
-}
+        if (!$borrowing) {
+            return redirect()->route('borrowings.index')->with('error', 'Emprunt introuvable.');
+        }
 
+        $book = Book::find($borrowing->book_id);
+
+        if ($book) {
+            $book->increment('copies_available');
+        }
+
+        $borrowing->delete();
+
+        return redirect()->route('borrowings.index')->with('success', 'Emprunt supprimé avec succès.');
+    }
 }

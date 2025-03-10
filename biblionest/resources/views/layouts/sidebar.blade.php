@@ -32,6 +32,11 @@
             </a>
         </li>
         <li>
+            <a href="{{ route('adherents.index') }}" class="block text-gray-600 hover:text-blue-500 flex items-center gap-2">
+                👤 Adherents
+            </a>
+        </li>
+        <li>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="block text-red-600 hover:text-red-800 flex items-center gap-2">

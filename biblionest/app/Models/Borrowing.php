@@ -9,13 +9,13 @@ class Borrowing extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'book_id', 'borrowed_at', 'due_date', 'returned_at'];
+protected $fillable = ['adherent_id', 'book_id', 'borrowed_at', 'due_date', 'returned_at'];
     protected $dates = ['borrowed_at', 'due_date', 'returned_at']; // Pour formater correctement les dates
 
 
-    public function user()
+    public function adherent()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Adherent::class, 'adherent_id');
     }
 
     public function book()
@@ -27,6 +27,8 @@ class Borrowing extends Model
     {
         return $this->hasOne(Penalty::class);
     }
+
+
 
 }
 

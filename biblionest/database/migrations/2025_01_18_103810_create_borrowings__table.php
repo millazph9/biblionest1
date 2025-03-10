@@ -4,17 +4,19 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up() {
+    public function up()
+    {
         Schema::create('borrowings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('book_id')->constrained('books')->onDelete('cascade');
-            $table->dateTime('borrowed_at');
-            $table->dateTime('due_date');
-            $table->dateTime('returned_at')->nullable();
+            $table->foreignId('adherent_id')->constrained('adherents')->onDelete('cascade'); // Assure-toi que ce champ existe
+            $table->foreignId('book_id')->constrained()->onDelete('cascade');
+            $table->timestamp('borrowed_at')->nullable();
+            $table->timestamp('due_date')->nullable();
+            $table->timestamp('returned_at')->nullable();
             $table->timestamps();
         });
     }
+
 
     public function down() {
         Schema::dropIfExists('borrowings');

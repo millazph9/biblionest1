@@ -37,7 +37,64 @@ class BookController extends Controller
 
         
     }
+
+    public function create()
+    {
+        $categories = Category::all();
+        return view('books.create', compact('categories'));
+    }
+
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'isbn' => 'required|unique:books',
+            'published_year' => 'required|integer',
+            'category_id' => 'required|exists:categories,id',
+            'copies_available' => 'required|integer|min:1',
+        ]);
     
+        Book::create($validatedData);
+    
+        return redirect()->route('books.index')->with('success', 'Livre ajouté avec succès.');
+    }
+
+    public function show(Book $book)
+    {
+        return redirect()->route('books.index');
+    }
+
+
+
+        public function edit(Book $book)
+    {
+        $categories = Category::all();
+        return view('books.edit', compact('book', 'categories'));
+    }
+
+    public function update(Request $request, Book $book)
+    {
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'isbn' => 'required|unique:books,isbn,' . $book->id,
+            'published_year' => 'required|integer',
+            'category_id' => 'required|exists:categories,id',
+            'copies_available' => 'required|integer|min:1',
+        ]);
+
+        $book->update($validatedData);
+
+        return redirect()->route('books.index')->with('success', 'Livre modifié avec succès.');
+    }
+
+    public function destroy(Book $book)
+    {
+        $book->delete();
+        return redirect()->route('books.index')->with('success', 'Livre supprimé avec succès.');
+    }
+
     public function exportPDF()
     {
         $books = Book::with('category')->get();
@@ -46,5 +103,6 @@ class BookController extends Controller
     
         return $pdf->download('livres_bibliothèque.pdf'); // ✅ Force le téléchargement du PDF
     }
+
     
 }

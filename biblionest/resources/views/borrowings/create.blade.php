@@ -20,10 +20,10 @@
             <!-- Sélection de l'utilisateur -->
             <div>
                 <label for="user_id" class="block text-lg font-medium text-gray-700">Emprunteur :</label>
-                <select name="user_id" id="user_id" required class="w-full border rounded px-4 py-2">
+                <select name="adherent_id" id="user_id" required class="w-full border rounded px-4 py-2">
                     <option value="">Sélectionner un utilisateur</option>
-                    @foreach($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                    @foreach($adherents as $adherent) <!-- ✅ On utilise bien la variable $adherents -->
+                        <option value="{{ $adherent->id }}">{{ $adherent->firstname }} {{ $adherent->lastname }}</option>
                     @endforeach
                 </select>
             </div>
