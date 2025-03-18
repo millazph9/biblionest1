@@ -120,4 +120,11 @@ class BorrowingController extends Controller
 
         return redirect()->route('borrowings.index')->with('success', 'Emprunt supprimé avec succès.');
     }
+
+    //         public function __construct()
+    // {
+    //     $this->middleware('auth');
+    //     $this->middleware('can:manage-adherents')->except(['index', 'show']);
+    // }
+
 }

@@ -75,14 +75,13 @@ class BookController extends Controller
 
     public function update(Request $request, Book $book)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
-            'isbn' => 'required|unique:books,isbn,' . $book->id,
-            'published_year' => 'required|integer',
-            'category_id' => 'required|exists:categories,id',
-            'copies_available' => 'required|integer|min:1',
-        ]);
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'author' => 'required|string|max:255',
+        'isbn' => 'required|unique:books|regex:/^[0-9]{10,13}$/', // ISBN à 10 ou 13 chiffres
+        'published_year' => 'required|integer|between:1800,2099', // Années réalistes
+        'copies_available' => 'required|integer|min:1',
+    ]);
 
         $book->update($validatedData);
 
@@ -103,6 +102,13 @@ class BookController extends Controller
     
         return $pdf->download('livres_bibliothèque.pdf'); // ✅ Force le téléchargement du PDF
     }
+
+    //         public function __construct()
+    // {
+    //     $this->middleware('auth');
+    //     $this->middleware('can:manage-adherents')->except(['index', 'show']);
+    // }
+
 
     
 }

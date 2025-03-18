@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Adherent;
-use Illuminate\Http\Request;
+use App\Http\Requests\AdherentRequest; // ✅ Import de AdherentRequest
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdherentController extends Controller
 {
-    public function index(Request $request)
+    public function index(AdherentRequest $request)
     {
         $query = Adherent::withCount('borrowings');
 
@@ -29,17 +29,9 @@ class AdherentController extends Controller
         return view('adherents.create');
     }
 
-    public function store(Request $request)
+    public function store(AdherentRequest $request) // ✅ Utilisation de AdherentRequest
     {
-        $validatedData = $request->validate([
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'email' => 'required|email|unique:adherents',
-            'phone_number' => 'required|string|max:15',
-            'address' => 'required|string|max:255',
-        ]);
-
-        Adherent::create($validatedData);
+        Adherent::create($request->validated());
 
         return redirect()->route('adherents.index')->with('success', 'Adhérent ajouté avec succès.');
     }
@@ -55,19 +47,11 @@ class AdherentController extends Controller
         return view('adherents.edit', compact('adherent'));
     }
 
-    public function update(Request $request, Adherent $adherent)
+    public function update(AdherentRequest $request, Adherent $adherent) // ✅ Utilisation de AdherentRequest
     {
-        $validatedData = $request->validate([
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:adherents,email,' . $adherent->id,
-            'phone_number' => 'required|string|max:15',
-            'address' => 'required|string|max:255',
-        ]);
-    
-        $adherent->update($validatedData);
-    
-        return redirect()->route('adherents.index')->with('success', 'Adhérent modifié avec succès.');
+        $adherent->update($request->validated());
+
+        return redirect()->route('adherents.index')->with('success', 'Adhérent mis à jour avec succès.');
     }
 
     public function destroy(Adherent $adherent)
@@ -97,4 +81,10 @@ class AdherentController extends Controller
 
         return $pdf->download("emprunts_{$adherent->firstname}_{$adherent->lastname}.pdf");
     }
+
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    //     $this->middleware('can:manage-adherents')->except(['index', 'show']);
+    // }
 }

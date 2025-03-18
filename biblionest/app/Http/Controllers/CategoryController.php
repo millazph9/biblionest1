@@ -92,4 +92,11 @@ class CategoryController extends Controller
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Catégorie supprimée avec succès.');
     }
+
+    //         public function __construct()
+    // {
+    //     $this->middleware('auth');
+    //     $this->middleware('can:manage-adherents')->except(['index', 'show']);
+    // }
+
 }

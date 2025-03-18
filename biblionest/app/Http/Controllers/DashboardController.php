@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Book;
 use App\Models\User;
-use App\Models\Borrowing;
 use App\Models\Penalty;
+use App\Models\Borrowing;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth'); // ✅ Appliquer un middleware d'authentification à toutes les méthodes
+    }
+
     public function index()
     {
         // Statistiques principales

@@ -94,4 +94,11 @@ class PenaltyController extends Controller
 
         return redirect()->route('penalties.index')->with('success', 'Pénalité payée.');
     }
+
+    //         public function __construct()
+    // {
+    //     $this->middleware('auth');
+    //     $this->middleware('can:manage-adherents')->except(['index', 'show']);
+    // }
+
 }

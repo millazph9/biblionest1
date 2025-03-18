@@ -22,10 +22,15 @@
                 <label for="user_id" class="block text-lg font-medium text-gray-700">Emprunteur :</label>
                 <select name="adherent_id" id="user_id" required class="w-full border rounded px-4 py-2">
                     <option value="">Sélectionner un utilisateur</option>
-                    @foreach($adherents as $adherent) <!-- ✅ On utilise bien la variable $adherents -->
-                        <option value="{{ $adherent->id }}">{{ $adherent->firstname }} {{ $adherent->lastname }}</option>
+                    @foreach($adherents as $adherent)
+                        <option value="{{ $adherent->id }}" {{ old('adherent_id') == $adherent->id ? 'selected' : '' }}>
+                            {{ $adherent->firstname }} {{ $adherent->lastname }}
+                        </option>
                     @endforeach
                 </select>
+                @error('adherent_id')
+                    <p class="text-red-500 text-sm">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Sélection du livre -->
@@ -34,21 +39,26 @@
                 <select name="book_id" id="book_id" required class="w-full border rounded px-4 py-2">
                     <option value="">Sélectionner un livre</option>
                     @foreach($books as $book)
-                        <option value="{{ $book->id }}">{{ $book->title }} - {{ $book->copies_available }} copies dispo</option>
+                        <option value="{{ $book->id }}" {{ old('book_id') == $book->id ? 'selected' : '' }}>
+                            {{ $book->title }} - {{ $book->copies_available }} copies dispo
+                        </option>
                     @endforeach
                 </select>
+                @error('book_id')
+                    <p class="text-red-500 text-sm">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Date d'emprunt (readonly) -->
             <div>
                 <label for="borrowed_at" class="block text-lg font-medium text-gray-700">Date d'emprunt :</label>
-                <input type="text" name="borrowed_at" value="{{ now()->format('Y-m-d') }}" readonly class="w-full border rounded px-4 py-2 bg-gray-100">
+                <input type="text" name="borrowed_at" value="{{ old('borrowed_at', now()->format('Y-m-d')) }}" readonly class="w-full border rounded px-4 py-2 bg-gray-100">
             </div>
 
             <!-- Date de retour prévue (readonly) -->
             <div>
                 <label for="due_date" class="block text-lg font-medium text-gray-700">Retour prévu :</label>
-                <input type="text" name="due_date" value="{{ now()->addDays(14)->format('Y-m-d') }}" readonly class="w-full border rounded px-4 py-2 bg-gray-100">
+                <input type="text" name="due_date" value="{{ old('due_date', now()->addDays(14)->format('Y-m-d')) }}" readonly class="w-full border rounded px-4 py-2 bg-gray-100">
             </div>
 
             <!-- Bouton d'enregistrement -->
