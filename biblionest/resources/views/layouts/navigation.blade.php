@@ -54,7 +54,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('adherents.index') }}" class="block text-gray-600 hover:text-blue-500">
+                <a href="/adherents" class="block text-gray-600 hover:text-blue-500">
                     👤 Adherents
                 </a>
             </li>

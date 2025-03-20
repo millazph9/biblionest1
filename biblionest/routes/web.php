@@ -23,7 +23,6 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::resource('books', BookController::class);
 Route::resource('borrowings', BorrowingController::class);
 Route::resource('penalties', PenaltyController::class);
-Route::resource('adherents', AdherentController::class);
 Route::resource('categories', CategoryController::class);
 
 // ✅ Routes pour Livewire Test
@@ -32,6 +31,7 @@ Route::get('/test-livewire', function () {
 });
 
 // ✅ Routes spécifiques aux adhérents
+Route::resource('adherents', AdherentController::class);
 Route::get('/adherents/{adherent}/borrowings', [AdherentController::class, 'borrowings'])
     ->name('adherents.borrowings');
 Route::get('/adherents/{adherent}/export-borrowings', [AdherentController::class, 'exportBorrowingsPDF'])
