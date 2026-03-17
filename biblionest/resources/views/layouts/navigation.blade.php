@@ -22,9 +22,9 @@
     <!-- Sidebar (Navigation) -->
     <nav id="sidebar" class="w-64 min-h-screen bg-white shadow-md px-4 py-6 fixed transform -translate-x-full sm:translate-x-0 transition-transform duration-300">
         <div class="mb-6 text-center">
-            <a href="{{ route('dashboard') }}" class="text-xl font-bold text-gray-700">
-                📚 {{ config('app.name', 'Laravel') }}
-            </a>
+                    <a href="/">
+                        <img src="{{ asset('img/biblionest.jpg') }}" alt="Logo" class="w-20 h-20 object-contain">
+                    </a>
         </div>
         
         <ul class="space-y-4">

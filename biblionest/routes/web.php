@@ -12,7 +12,7 @@ use App\Http\Controllers\DashboardController;
 
 // ✅ Route principale de l'accueil
 Route::get('/', function () {
-    return view('welcome'); // Assurez-vous que ce fichier existe dans resources/views/
+    return redirect()->route('login');
 });
 
 // ✅ Route principale du tableau de bord (SUPPRESSION DU MIDDLEWARE auth)
@@ -23,6 +23,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::resource('books', BookController::class);
 Route::resource('borrowings', BorrowingController::class);
 Route::resource('penalties', PenaltyController::class);
+Route::get('/mes-penalites', [PenaltyController::class, 'mesPenalites'])->middleware('auth')->name('penalties.mine');
+
 Route::resource('categories', CategoryController::class);
 
 // ✅ Routes pour Livewire Test
@@ -32,8 +34,8 @@ Route::get('/test-livewire', function () {
 
 // ✅ Routes spécifiques aux adhérents
 Route::resource('adherents', AdherentController::class);
-Route::get('/adherents/{adherent}/borrowings', [AdherentController::class, 'borrowings'])
-    ->name('adherents.borrowings');
+// Route::get('/adherents/{adherent}/borrowings', [AdherentController::class, 'borrowings'])
+//     ->name('adherents.borrowings');
 Route::get('/adherents/{adherent}/export-borrowings', [AdherentController::class, 'exportBorrowingsPDF'])
     ->name('adherents.export.borrowings');
 
@@ -44,6 +46,10 @@ Route::get('/books/export-pdf', [BookController::class, 'exportPDF'])
 
     Route::post('/borrowings/{borrowing}/return', [BorrowingController::class, 'returnBook'])
     ->name('borrowings.return');
+
+// edition
+Route::resource('editions', EditionController::class);
+
 
 // 🔹 Authentification (gérée par Laravel Breeze/Fortify) -> Toujours chargé mais non obligatoire
 require __DIR__.'/auth.php';

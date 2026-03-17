@@ -49,16 +49,18 @@ class BookController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
-            'isbn' => 'required|unique:books',
-            'published_year' => 'required|integer',
+            'isbn' => 'required|string|unique:books,isbn',
+            'published_year' => 'required|integer|min:0|max:2030',
             'category_id' => 'required|exists:categories,id',
             'copies_available' => 'required|integer|min:1',
+            'edition' => 'nullable|string|max:255', // Ajout du champ édition
         ]);
-    
+
         Book::create($validatedData);
-    
+
         return redirect()->route('books.index')->with('success', 'Livre ajouté avec succès.');
     }
+
 
     public function show(Book $book)
     {
@@ -75,18 +77,21 @@ class BookController extends Controller
 
     public function update(Request $request, Book $book)
     {
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'author' => 'required|string|max:255',
-        'isbn' => 'required|unique:books|regex:/^[0-9]{10,13}$/', // ISBN à 10 ou 13 chiffres
-        'published_year' => 'required|integer|between:1800,2099', // Années réalistes
-        'copies_available' => 'required|integer|min:1',
-    ]);
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'isbn' => 'required|string|unique:books,isbn,' . $book->id,
+            'published_year' => 'required|integer|min:0|max:2030',
+            'category_id' => 'required|exists:categories,id',
+            'copies_available' => 'required|integer|min:1',
+            'edition' => 'nullable|string|max:255',
+        ]);
 
         $book->update($validatedData);
 
-        return redirect()->route('books.index')->with('success', 'Livre modifié avec succès.');
+        return redirect()->route('books.index')->with('success', 'Livre mis à jour avec succès.');
     }
+
 
     public function destroy(Book $book)
     {

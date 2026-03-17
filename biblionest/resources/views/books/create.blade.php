@@ -33,7 +33,7 @@
 
             <div class="mb-4">
                 <label for="isbn" class="block text-gray-700">ISBN :</label>
-                <input type="text" name="isbn" value="{{ old('isbn') }}" required class="w-full border rounded px-4 py-2">
+                <input type="text" name="isbn" id="isbn" value="{{ old('isbn', '978-' . rand(1000000000, 9999999999)) }}" required class="w-full border rounded px-4 py-2" readonly>
                 @error('isbn')
                     <p class="text-red-500 text-sm">{{ $message }}</p>
                 @enderror
@@ -60,6 +60,15 @@
                     <p class="text-red-500 text-sm">{{ $message }}</p>
                 @enderror
             </div>
+            
+            <div class="mb-4">
+                <label for="edition" class="block text-gray-700">Édition :</label>
+                <input type="text" name="edition" value="{{ old('edition', $book->edition ?? '') }}" class="w-full border rounded px-4 py-2">
+                @error('edition')
+                    <p class="text-red-500 text-sm">{{ $message }}</p>
+                @enderror
+            </div>
+
 
             <div class="mb-4">
                 <label for="copies_available" class="block text-gray-700">Copies Disponibles :</label>
@@ -72,4 +81,10 @@
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Enregistrer</button>
         </form>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("isbn").value = "978-" + Math.floor(1000000000 + Math.random() * 9000000000);
+        });
+    </script>
 </x-app-layout>

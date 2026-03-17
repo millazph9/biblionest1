@@ -10,32 +10,14 @@
             </a>
         </div>
 
-        <!-- Filtres et Export -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
-            <form method="GET" action="{{ route('books.index') }}" class="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
-                <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
-                    <label for="category_id" class="text-sm sm:text-lg self-center">Filtrer :</label>
-                    <select name="category_id" id="category_id" class="border px-3 py-2 rounded-lg w-full sm:w-auto">
-                        <option value="">Toutes les catégories</option>
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
-                                {{ $category->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md transition w-full sm:w-auto">
-                    🔎 Filtrer
-                </button>
-            </form>
-
-            <div class="w-full sm:w-auto flex justify-end">
-                <a href="{{ route('books.export.pdf') }}" 
-                   class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow-md transition text-sm flex items-center gap-2 justify-center w-full sm:w-auto">
-                    📄 Exporter en PDF
-                </a>
-            </div>
-        </div>
+        <!-- Barre de recherche -->
+        <form method="GET" action="{{ route('books.index') }}" class="mb-4 flex justify-center">
+            <input type="text" name="search" placeholder="Rechercher un livre..." value="{{ request('search') }}"
+                   class="border px-3 py-2 rounded-lg w-full sm:w-1/2">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 ml-2 rounded-lg shadow-md">
+                🔍 Rechercher
+            </button>
+        </form>
 
         <!-- Affichage Desktop -->
         <div class="hidden sm:block overflow-x-auto">
@@ -72,6 +54,11 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-4">
+            {{ $books->links() }}
         </div>
 
         <!-- Affichage Mobile -->

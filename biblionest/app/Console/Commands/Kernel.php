@@ -8,19 +8,22 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     /**
-     * Enregistrer les commandes Artisan
+     * Définir la planification des tâches artisan.
+     */
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->command('app:generer-penalites')->dailyAt('01:00');
+    }
+
+
+    /**
+     * Enregistrer les commandes Artisan.
      */
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
-    }
 
-    /**
-     * Définir la planification des tâches artisan
-     */
-    protected function schedule(Schedule $schedule)
-    {
-        $schedule->command('penalties:check')->everyMinute()->withoutOverlapping();
+        // Optionnel : inclure les routes de console si tu en utilises
+        require base_path('routes/console.php');
     }
-    
 }

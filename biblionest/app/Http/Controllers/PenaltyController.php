@@ -34,27 +34,27 @@ class PenaltyController extends Controller
         return view('penalties.index', compact('penalties', 'users'));
     }
     
-    public function create()
-    {
-        $borrowings = Borrowing::whereNull('returned_at')->with('book', 'user')->get(); // Récupérer uniquement les emprunts non retournés
-        return view('penalties.create', compact('borrowings'));
-    }
+    // public function create()
+    // {
+    //     $borrowings = Borrowing::whereNull('returned_at')->with('book', 'user')->get(); // Récupérer uniquement les emprunts non retournés
+    //     return view('penalties.create', compact('borrowings'));
+    // }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'borrowing_id' => 'required|exists:borrowings,id',
-            'amount' => 'required|numeric|min:1',
-        ]);
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'borrowing_id' => 'required|exists:borrowings,id',
+    //         'amount' => 'required|numeric|min:1',
+    //     ]);
 
-        Penalty::create([
-            'borrowing_id' => $request->borrowing_id,
-            'amount' => $request->amount,
-            'paid' => false,
-        ]);
+    //     Penalty::create([
+    //         'borrowing_id' => $request->borrowing_id,
+    //         'amount' => $request->amount,
+    //         'paid' => false,
+    //     ]);
 
-        return redirect()->route('penalties.index')->with('success', 'Pénalité enregistrée.');
-    }
+    //     return redirect()->route('penalties.index')->with('success', 'Pénalité enregistrée.');
+    // }
 
     public function edit(Penalty $penalty)
     {
@@ -94,6 +94,18 @@ class PenaltyController extends Controller
 
         return redirect()->route('penalties.index')->with('success', 'Pénalité payée.');
     }
+
+
+    public function mesPenalites()
+    {
+        $penalties = Penalty::whereHas('borrowing', function ($q) {
+            $q->where('user_id', auth()->id());
+        })->with('borrowing.book')->latest()->get();
+
+        return view('penalties.mes-penalites', compact('penalties'));
+    }
+
+
 
     //         public function __construct()
     // {

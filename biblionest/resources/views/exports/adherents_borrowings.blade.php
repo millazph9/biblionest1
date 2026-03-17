@@ -12,12 +12,12 @@
     </style>
 </head>
 <body>
-    <h2>📄 Liste des Emprunts de {{ $adherent->firstname }} {{ $adherent->lastname }}</h2>
+    <h2>Liste des Emprunts de {{ $adherent->firstname }} {{ $adherent->lastname }}</h2>
     <p><strong>Email:</strong> {{ $adherent->email }}</p>
     <p><strong>Téléphone:</strong> {{ $adherent->phone_number }}</p>
     <p><strong>Adresse:</strong> {{ $adherent->address }}</p>
 
-    <h3>📚 Livres empruntés :</h3>
+    <h3>Livres empruntés :</h3>
 
     @if($adherent->borrowings->isEmpty())
         <p>Aucun emprunt trouvé.</p>

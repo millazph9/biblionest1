@@ -8,18 +8,12 @@ use App\Models\User;
 use App\Models\Penalty;
 use App\Models\Borrowing;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth'); // ✅ Appliquer un middleware d'authentification à toutes les méthodes
-    }
-
     public function index()
     {
-        // Statistiques principales
+        // 📊 Statistiques globales
         $totalBooks = Book::count();
         $totalUsers = User::count();
         $totalBorrowings = Borrowing::whereNull('returned_at')->count();
@@ -28,7 +22,7 @@ class DashboardController extends Controller
                                         ->count();
         $totalUnpaidPenalties = Penalty::where('paid', false)->sum('amount');
 
-        // 📊 Récupération des emprunts par mois pour le graphique
+        // 📈 Emprunts par mois (pour le graphique)
         $monthlyBorrowings = Borrowing::whereYear('borrowed_at', Carbon::now()->year)
             ->selectRaw('MONTH(borrowed_at) as month, COUNT(*) as count')
             ->groupBy('month')
@@ -36,7 +30,6 @@ class DashboardController extends Controller
             ->pluck('count', 'month')
             ->toArray();
 
-        // Convertir les numéros de mois en noms de mois
         $months = [
             1 => 'Janvier', 2 => 'Février', 3 => 'Mars', 4 => 'Avril', 5 => 'Mai', 6 => 'Juin',
             7 => 'Juillet', 8 => 'Août', 9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Décembre'
@@ -47,8 +40,25 @@ class DashboardController extends Controller
 
         foreach ($months as $num => $name) {
             $formattedMonths[] = $name;
-            $formattedData[] = $monthlyBorrowings[$num] ?? 0; // 0 si aucun emprunt pour ce mois
+            $formattedData[] = $monthlyBorrowings[$num] ?? 0;
         }
+
+        // 🆕 Derniers adhérents
+        $latestUsers = User::latest()->take(5)->get();
+
+        // 🆕 Livres les plus empruntés
+        $topBooks = Book::withCount('borrowings')
+                        ->orderByDesc('borrowings_count')
+                        ->take(5)
+                        ->get();
+
+        // 🆕 Emprunts en retard récents
+        $recentLateBorrowings = Borrowing::whereNull('returned_at')
+            ->where('due_date', '<', now())
+            ->with(['book', 'user'])
+            ->latest()
+            ->take(5)
+            ->get();
 
         return view('dashboard.index', compact(
             'totalBooks',
@@ -57,7 +67,10 @@ class DashboardController extends Controller
             'totalLateBorrowings',
             'totalUnpaidPenalties',
             'formattedMonths',
-            'formattedData'
+            'formattedData',
+            'latestUsers',
+            'topBooks',
+            'recentLateBorrowings'
         ));
     }
 }

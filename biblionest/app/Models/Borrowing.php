@@ -2,20 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\Book; // ✅ Ajout de l'import du modèle Book
 
 class Borrowing extends Model
 {
-    use HasFactory;
-
-protected $fillable = ['adherent_id', 'book_id', 'borrowed_at', 'due_date', 'returned_at'];
-    protected $dates = ['borrowed_at', 'due_date', 'returned_at']; // Pour formater correctement les dates
-
-
-    public function adherent()
+    
+    protected $fillable = [
+        'adherent_id',
+        'book_id',
+        'due_date',
+        'returned_at',
+        // ajoute ici tous les champs que tu veux autoriser
+    ];
+    
+    public function user()
     {
-        return $this->belongsTo(Adherent::class, 'adherent_id');
+        return $this->belongsTo(User::class);
     }
 
     public function book()
@@ -23,12 +27,11 @@ protected $fillable = ['adherent_id', 'book_id', 'borrowed_at', 'due_date', 'ret
         return $this->belongsTo(Book::class);
     }
 
-    public function penalty()
-    {
-        return $this->hasOne(Penalty::class);
-    }
+    public function adherent()
+{
+    return $this->belongsTo(User::class);
+}
 
 
 
 }
-

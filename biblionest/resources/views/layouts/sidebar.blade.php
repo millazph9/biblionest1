@@ -1,7 +1,9 @@
 <nav class="">
     <div class="mb-6 text-center">
         <a href="{{ route('dashboard') }}" class="text-2xl font-bold text-gray-700 flex items-center justify-center gap-2">
-            📚 <span>{{ config('app.name', 'Laravel') }}</span>
+                                
+                        <img src="{{ asset('img/biblionest.jpg') }}" alt="Logo" class="w-20 h-20 object-contain">
+                    
         </a>
     </div>
 

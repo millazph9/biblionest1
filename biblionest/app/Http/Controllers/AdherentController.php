@@ -1,16 +1,18 @@
-<?php
+<?php 
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Adherent;
-use App\Http\Requests\AdherentRequest; // ✅ Import de AdherentRequest
+use App\Models\Category;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdherentController extends Controller
 {
-    public function index(AdherentRequest $request)
+    public function index(Request $request)
     {
-        $query = Adherent::withCount('borrowings');
+        // Ajout de la recherche
+        $query = Adherent::query();
 
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
@@ -19,37 +21,57 @@ class AdherentController extends Controller
                   ->orWhere('email', 'like', "%$searchTerm%");
         }
 
+        // Pagination
         $adherents = $query->paginate(10);
-        
+
         return view('adherents.index', compact('adherents'));
     }
 
     public function create()
     {
-        return view('adherents.create');
+        $categories = Category::all(); // Récupère toutes les catégories
+        return view('adherents.create', compact('categories'));
     }
 
-    public function store(AdherentRequest $request) // ✅ Utilisation de AdherentRequest
-    {
-        Adherent::create($request->validated());
+public function store(Request $request)
+{
+    $validatedData = $request->validate([
+        'firstname' => 'required|string|max:255',
+        'lastname' => 'required|string|max:255',
+        'email' => 'required|email|unique:adherents,email',
+        'phone_number' => ['required', 'regex:/^(\\+33|0)[1-9]\\d{8}$/'],
+        'address' => 'required|string|max:255',
+    ]);
 
-        return redirect()->route('adherents.index')->with('success', 'Adhérent ajouté avec succès.');
-    }
+    Adherent::create($validatedData);
+
+    return redirect()->route('adherents.index')->with('success', 'Adhérent ajouté avec succès.');
+}
+
 
     public function show(Adherent $adherent)
     {
-        $adherent->load('borrowings.book'); 
         return view('adherents.show', compact('adherent'));
     }
 
     public function edit(Adherent $adherent)
     {
-        return view('adherents.edit', compact('adherent'));
+        $categories = Category::all(); // Récupérer les catégories aussi dans edit
+        return view('adherents.edit', compact('adherent', 'categories'));
     }
 
-    public function update(AdherentRequest $request, Adherent $adherent) // ✅ Utilisation de AdherentRequest
+    public function update(Request $request, Adherent $adherent)
     {
-        $adherent->update($request->validated());
+        // Validation des données avant mise à jour
+        $validatedData = $request->validate([
+            'firstname' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'email' => 'required|email|unique:adherents,email,' . $adherent->id,
+            'phone_number' => ['required', 'regex:/^(\\+33|0)[1-9]\\d{8}$/'],
+            'address' => 'required|string|max:255',
+        ]);
+
+        $adherent->update($validatedData);
 
         return redirect()->route('adherents.index')->with('success', 'Adhérent mis à jour avec succès.');
     }
@@ -60,31 +82,20 @@ class AdherentController extends Controller
         return redirect()->route('adherents.index')->with('success', 'Adhérent supprimé avec succès.');
     }
 
-    public function borrowings($id)
-    {
-        $adherent = Adherent::with('borrowings.book')->findOrFail($id);
-        return view('adherents.borrowings', compact('adherent'));
-    }
-
     /**
-     * Génération du PDF des emprunts de l'adhérent
+     * Exporter les emprunts d'un adhérent en PDF.
      */
     public function exportBorrowingsPDF(Adherent $adherent)
     {
-        $adherent->load('borrowings.book');
+        $adherent->load('borrowings.book'); // Charge les emprunts liés à l'adhérent
 
         if ($adherent->borrowings->isEmpty()) {
-            return redirect()->route('adherents.show', $adherent->id)->with('error', 'Aucun emprunt à exporter.');
+            return redirect()->route('adherents.show', $adherent->id)
+                ->with('error', 'Aucun emprunt à exporter.');
         }
 
         $pdf = Pdf::loadView('exports.adherents_borrowings', compact('adherent'));
 
         return $pdf->download("emprunts_{$adherent->firstname}_{$adherent->lastname}.pdf");
     }
-
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    //     $this->middleware('can:manage-adherents')->except(['index', 'show']);
-    // }
 }

@@ -1,15 +1,13 @@
 <x-app-layout>
     <div class="container mx-auto px-4">
         <h1 class="text-xl sm:text-2xl font-bold mb-4 text-center">👤 Liste des Adhérents</h1>
-
         <!-- Bouton Ajouter un Adhérent -->
         <div class="w-full flex justify-center sm:justify-start mb-4">
             <a href="{{ route('adherents.create') }}" 
-               class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md transition transform hover:scale-105 flex items-center gap-2 text-sm sm:text-base">
+               class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md transition transform hover:scale-105 flex items-center gap-2 text-sm sm:text-base">
                 ➕ Ajouter un adhérent
             </a>
         </div>
-
         <!-- Formulaire de recherche -->
         <form method="GET" action="{{ route('adherents.index') }}" class="mb-4 flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
             <input type="text" name="search" placeholder="Rechercher un adhérent..." value="{{ request('search') }}"
@@ -18,7 +16,6 @@
                 🔍 Rechercher
             </button>
         </form>
-
         <!-- Tableau des adhérents -->
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
@@ -60,7 +57,6 @@
                 </tbody>
             </table>
         </div>
-
         <!-- Pagination -->
         <div class="mt-4">
             {{ $adherents->links() }}

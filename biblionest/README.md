@@ -64,3 +64,72 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+_____________________________________________________________________________________________
+
+# 📚 Biblionest – Application de gestion de bibliothèque numérique
+
+**Développé par Ludmilla ZEPHIR (2023 – 2025)**  
+Gestion complète des livres, emprunts, pénalités et utilisateurs au sein d'une bibliothèque.
+
+---
+
+## 🚀 Présentation
+
+**Biblionest** est une application web destinée aux employés de bibliothèque pour gérer efficacement les ouvrages, les emprunts, les pénalités de retard et les statistiques d’activité.  
+Elle propose une interface intuitive, sécurisée, responsive, et intègre un tableau de bord interactif.
+
+---
+
+## 🎯 Fonctionnalités principales
+
+- 🔍 **Livres**
+  - Ajouter, modifier, supprimer et rechercher des livres
+  - Classement par catégorie
+- 🔄 **Emprunts**
+  - Enregistrement et suivi des emprunts/retours
+  - Détéction automatique des retards
+- ⚠️ **Pénalités**
+  - Application automatique des pénalités
+  - Gestion du statut "payée/non payée"
+- 👥 **Utilisateurs**
+  - Authentification (Laravel Breeze)
+  - Gestion des rôles : Admin / Employé
+- 📊 **Dashboard**
+  - Statistiques en temps réel (livres, emprunts, retards)
+  - Export PDF des données
+
+---
+
+## 🧰 Stack Technique
+
+| Élément       | Technologie              |
+|--------------|--------------------------|
+| Frontend     | Blade + TailwindCSS      |
+| Backend      | Laravel 10 (PHP)         |
+| Authentification | Laravel Breeze       |
+| Base de données | MySQL                |
+| Planificateur | Laravel Scheduler       |
+| Hébergement  | O2Switch                 |
+| Nom de domaine | [https://app.biblionest.fr](https://app.biblionest.fr) |
+
+---
+
+## 🗂️ Architecture MVC
+
+**Modèles :** `Book`, `Category`, `Borrowing`, `Penalty`, `User`  
+**Contrôleurs :** `BookController`, `BorrowingController`, `PenaltyController`, `UserController`  
+**Vues Blade :** Pages pour les livres, emprunts, pénalités, dashboard
+
+---
+
+## 🛠️ Installation locale
+
+```bash
+git clone https://bitbucket.org/tonutilisateur/biblionest.git
+cd biblionest
+cp .env.example .env
+composer install
+php artisan key:generate
+php artisan migrate
+php artisan serve
