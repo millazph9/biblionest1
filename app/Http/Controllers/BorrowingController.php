@@ -59,7 +59,7 @@ class BorrowingController extends Controller
             'adherent_id' => $request->adherent_id, // Remplacement user_id → adherent_id
             'book_id' => $book->id,
             'borrowed_at' => now(),
-            'due_date' => now()->addDays(14),
+            'due_date' => now()->addDays(3),
         ]);
 
         $book->decrement('copies_available');
@@ -126,5 +126,6 @@ class BorrowingController extends Controller
     //     $this->middleware('auth');
     //     $this->middleware('can:manage-adherents')->except(['index', 'show']);
     // }
+
 
 }

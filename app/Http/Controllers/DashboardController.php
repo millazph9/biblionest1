@@ -23,25 +23,33 @@ class DashboardController extends Controller
         $totalUnpaidPenalties = Penalty::where('paid', false)->sum('amount');
 
         // 📈 Emprunts par mois (pour le graphique)
-        $monthlyBorrowings = Borrowing::whereYear('borrowed_at', Carbon::now()->year)
-            ->selectRaw('MONTH(borrowed_at) as month, COUNT(*) as count')
-            ->groupBy('month')
-            ->orderBy('month')
-            ->pluck('count', 'month')
-            ->toArray();
+         $borrowingByMonth = Borrowing::whereNotNull('borrowed_at')->selectRaw('MONTH(borrowed_at) as month, COUNT(*) as total')
+        ->groupBy('month')
+        ->orderBy('month')
+        ->get();
+    
 
-        $months = [
-            1 => 'Janvier', 2 => 'Février', 3 => 'Mars', 4 => 'Avril', 5 => 'Mai', 6 => 'Juin',
-            7 => 'Juillet', 8 => 'Août', 9 => 'Septembre', 10 => 'Octobre', 11 => 'Novembre', 12 => 'Décembre'
-        ];
+        $monthNames = [
+    1 => 'Janvier',
+    2 => 'Février',
+    3 => 'Mars',
+    4 => 'Avril',
+    5 => 'Mai',
+    6 => 'Juin',
+    7 => 'Juillet',
+    8 => 'Août',
+    9 => 'Septembre',
+    10 => 'Octobre',
+    11 => 'Novembre',
+    12 => 'Décembre',
+];
 
-        $formattedMonths = [];
-        $formattedData = [];
+$months = $borrowingByMonth->pluck('month')->map(function ($month) use ($monthNames) {
+    return $monthNames[(int) $month] ?? 'Erreur';
+});
+        $counts = $borrowingByMonth->pluck('total');
 
-        foreach ($months as $num => $name) {
-            $formattedMonths[] = $name;
-            $formattedData[] = $monthlyBorrowings[$num] ?? 0;
-        }
+    
 
         // 🆕 Derniers adhérents
         $latestUsers = User::latest()->take(5)->get();
@@ -66,11 +74,11 @@ class DashboardController extends Controller
             'totalBorrowings',
             'totalLateBorrowings',
             'totalUnpaidPenalties',
-            'formattedMonths',
-            'formattedData',
             'latestUsers',
             'topBooks',
-            'recentLateBorrowings'
+            'recentLateBorrowings',
+            'months',
+            'counts'
         ));
     }
 }

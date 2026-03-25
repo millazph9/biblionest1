@@ -14,7 +14,10 @@
         <!-- 📈 Graphique -->
         <div class="bg-white p-6 rounded shadow mb-8">
             <h2 class="text-lg font-semibold mb-4">📈 Emprunts par Mois</h2>
-            <canvas id="borrowingsChart" height="100"></canvas>
+            <div style=" height:300px">
+                <canvas id="borrowingsChart"></canvas>
+
+            </div>
         </div>
 
         <!-- 🔄 Derniers adhérents -->
@@ -107,30 +110,33 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            let ctx = document.getElementById('borrowingsChart');
-            let labels = {!! json_encode($formattedMonths ?? []) !!};
-            let data = {!! json_encode($formattedData ?? []) !!};
+            const ctx = document.getElementById('borrowingsChart');
+            const labels = @json($months);
+            const data = @json($counts);
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [{
-                        label: 'Emprunts par Mois',
-                        data,
-                        backgroundColor: 'rgba(59, 130, 246, 0.5)',
-                        borderColor: 'rgba(59, 130, 246, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true }
+
+            if(ctx){
+                new Chart(ctx, {
+                    type : 'bar',
+                    data : {
+                        labels : labels,
+                        datasets : [{
+                            label : 'Emprunts par mois',
+                            data : data,
+                            backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth : 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
                     }
-                }
-            });
+                });
+            }
         });
     </script>
 </x-app-layout>

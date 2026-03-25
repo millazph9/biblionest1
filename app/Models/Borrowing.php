@@ -12,6 +12,7 @@ class Borrowing extends Model
     protected $fillable = [
         'adherent_id',
         'book_id',
+        'borrowed_at',
         'due_date',
         'returned_at',
         // ajoute ici tous les champs que tu veux autoriser
@@ -29,8 +30,10 @@ class Borrowing extends Model
 
     public function adherent()
 {
-    return $this->belongsTo(User::class);
+    return $this->belongsTo(Adherent::class);
 }
+
+
 
 
 

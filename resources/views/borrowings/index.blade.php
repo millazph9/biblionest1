@@ -16,7 +16,7 @@
                 <select name="adherent_id" class="border px-3 py-2 rounded-lg w-full sm:w-auto">
                     <option value="">Tous les emprunteurs</option>
                     @foreach($adherents as $adherent)
-                        <option value="{{ $adherent->id }}" {{ request('adherent_id') == $adherent->id ? 'selected' : '' }}>
+                        <option value="{{ $adherent->id }}" value = "{{ request('adherent_id') == $adherent->id ? 'selected' : '' }}">
                             {{ $adherent->firstname }} {{ $adherent->lastname }}
                         </option>
                     @endforeach

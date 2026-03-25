@@ -51,7 +51,7 @@
                 <label for="category_id" class="block text-gray-700">Catégorie :</label>
                 <select name="category_id" required class="w-full border rounded px-4 py-2">
                     @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                        <option value="{{ $category->id }}" value="{{ old('category_id') == $category->id ? 'selected' : '' }}">
                             {{ $category->name }}
                         </option>
                     @endforeach

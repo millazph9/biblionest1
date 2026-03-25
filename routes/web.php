@@ -19,11 +19,13 @@ Route::get('/', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
+
 // ✅ Routes sans restriction (auth retiré)
 Route::resource('books', BookController::class);
 Route::resource('borrowings', BorrowingController::class);
 Route::resource('penalties', PenaltyController::class);
-Route::get('/mes-penalites', [PenaltyController::class, 'mesPenalites'])->middleware('auth')->name('penalties.mine');
+Route::get('/penalites', [PenaltyController::class, 'index'])->name('penalties.index');
+Route::post('/penalties/{penalty}/pay', [PenaltyController::class, 'pay'])->name('penalties.pay');
 
 Route::resource('categories', CategoryController::class);
 

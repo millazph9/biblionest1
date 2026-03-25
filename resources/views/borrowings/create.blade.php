@@ -23,7 +23,7 @@
                 <select name="adherent_id" id="user_id" required class="w-full border rounded px-4 py-2">
                     <option value="">Sélectionner un utilisateur</option>
                     @foreach($adherents as $adherent)
-                        <option value="{{ $adherent->id }}" {{ old('adherent_id') == $adherent->id ? 'selected' : '' }}>
+                        <option value="{{ $adherent->id }} {{ old('adherent_id') == $adherent->id ? 'selected' : '' }}">
                             {{ $adherent->firstname }} {{ $adherent->lastname }}
                         </option>
                     @endforeach
@@ -58,7 +58,7 @@
             <!-- Date de retour prévue (readonly) -->
             <div>
                 <label for="due_date" class="block text-lg font-medium text-gray-700">Retour prévu :</label>
-                <input type="text" name="due_date" value="{{ old('due_date', now()->addDays(14)->format('Y-m-d')) }}" readonly class="w-full border rounded px-4 py-2 bg-gray-100">
+                <input type="text" name="due_date" value="{{ old('due_date', now()->addDays(3)->format('Y-m-d')) }}" readonly class="w-full border rounded px-4 py-2 bg-gray-100">
             </div>
 
             <!-- Bouton d'enregistrement -->
